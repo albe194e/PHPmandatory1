@@ -1,5 +1,24 @@
 @import 'variables.css';
 
+header {
+    text-align: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #30404d;
+}
+
+header h1 {
+    font-size: 2.5rem;
+    color: #0076d1;
+    margin: 0;
+    letter-spacing: 1px;
+}
+
+header h1 i {
+    margin-right: 10px;
+    color: #0076d1;
+}
+
 article {
     margin-bottom: 1rem;
     padding: 1rem;
@@ -59,9 +78,10 @@ article {
 /* Navigation styles */
 .main-nav {
     background-color: #202b38;
-    padding: 10px 0;
-    margin-bottom: 20px;
-    border-radius: 4px;
+    padding: 12px 0;
+    margin-bottom: 25px;
+    border-radius: 6px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
     border: 1px solid #30404d;
 }
 
@@ -71,28 +91,43 @@ article {
     margin: 0;
     padding: 0;
     justify-content: center;
+    flex-wrap: wrap;
 }
 
 .main-nav li {
-    margin: 0 15px;
+    margin: 0 8px;
+    position: relative;
 }
 
 .main-nav a {
     text-decoration: none;
     color: #dbdbdb;
-    font-weight: bold;
-    padding: 5px 10px;
-    border-radius: 3px;
-    transition: background-color 0.3s;
+    font-weight: 600;
+    padding: 10px 16px;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    display: block;
+    letter-spacing: 0.5px;
 }
 
 .main-nav a:hover {
     background-color: #161f27;
+    color: white;
+    transform: translateY(-2px);
 }
 
 .main-nav a.active {
     background-color: #0076d1;
     color: white;
+    box-shadow: 0 2px 5px rgba(0, 118, 209, 0.3);
+}
+
+.main-nav a.active:hover {
+    background-color: #0064b0;
+}
+
+.main-nav a i {
+    margin-right: 6px;
 }
 
 /* Dashboard styles */

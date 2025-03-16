@@ -1,0 +1,30 @@
+# Environment variables
+.env
+
+# Logs
+log/
+*.log
+
+# Dependency directories
+vendor/
+node_modules/
+
+# IDE files
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.swp
+*.swo
