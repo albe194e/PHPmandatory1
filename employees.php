@@ -19,9 +19,7 @@ include_once 'views/header.php';
     <main>
         <h2>Employees</h2>
         <nav>
-            <ul>
-                <li><a href="new.php" title="Create new employee">Add employee</a></li>
-            </ul>
+            <a href="new.php" title="Create new employee" class="button">Add employee</a>
         </nav>
         <?php if (isset($errorMessage)): ?>
             <section>

@@ -1,4 +1,4 @@
 :root {
-    --colorMain: black;
-    --colorError: red;
+    --colorMain: var(--border-color);
+    --colorError: var(--error-color);
 }
