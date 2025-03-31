@@ -40,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             header('Location: departments.php');
             exit;
         } else {
-            $errorMessage = 'Failed to delete department.';
+            $errorMessage = 'Failed to delete department. Ensure it has no employees.';
         }
     } elseif (isset($_POST['search'])) {
         $searchQuery = $_POST['searchQuery'];

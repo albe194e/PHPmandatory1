@@ -116,15 +116,34 @@ Class Department extends Database
     public function delete($id): bool
     {
         $pdo = $this->connect();
-        $sql =<<<SQL
-            DELETE FROM department
+
+        // Check if the department has employees
+        $checkSql =<<<SQL
+            SELECT COUNT(*) AS employeeCount
+            FROM employee
             WHERE nDepartmentID = :id;
         SQL;
 
         try {
-            $stmt = $pdo->prepare($sql);
-            $stmt->bindValue(':id', $id, PDO::PARAM_INT);
-            return $stmt->execute();
+            $checkStmt = $pdo->prepare($checkSql);
+            $checkStmt->bindValue(':id', $id, PDO::PARAM_INT);
+            $checkStmt->execute();
+            $result = $checkStmt->fetch();
+
+            if ($result['employeeCount'] > 0) {
+                // Department has employees, cannot delete
+                return false;
+            }
+
+            // Proceed to delete the department
+            $deleteSql =<<<SQL
+                DELETE FROM department
+                WHERE nDepartmentID = :id;
+            SQL;
+
+            $deleteStmt = $pdo->prepare($deleteSql);
+            $deleteStmt->bindValue(':id', $id, PDO::PARAM_INT);
+            return $deleteStmt->execute();
         } catch (PDOException $e) {
             Logger::logText('Error deleting department: ', $e);
             return false;
