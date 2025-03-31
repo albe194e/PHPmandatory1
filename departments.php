@@ -4,8 +4,9 @@ require_once 'src/department.php';
 
 $department = new Department();
 $errorMessage = null;
+$searchQuery = '';
 
-// Handle form submissions for Create, Update, and Delete
+// Handle form submissions for Create, Update, Delete, and Search
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['create'])) {
         $name = $_POST['name'];
@@ -32,10 +33,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             $errorMessage = 'Failed to delete department.';
         }
+    } elseif (isset($_POST['search'])) {
+        $searchQuery = $_POST['searchQuery'];
     }
 }
 
-$departments = $department->getAll();
+// Retrieve departments, filtered by search query if provided
+if (!empty($searchQuery)) {
+    $departments = $department->search($searchQuery);
+} else {
+    $departments = $department->getAll();
+}
 
 if (!$departments && !$errorMessage) {
     $errorMessage = 'There was an error while retrieving the list of departments.';
@@ -50,6 +58,15 @@ include_once 'views/header.php';
             <p class="error"><?=$errorMessage ?></p>
         </section>
     <?php endif; ?>
+
+    <!-- Search Bar -->
+    <section>
+        <h3>Search Departments</h3>
+        <form method="POST" action="departments.php">
+            <input type="text" name="searchQuery" placeholder="Search by name..." value="<?=htmlspecialchars($searchQuery) ?>">
+            <button type="submit" name="search">Search</button>
+        </form>
+    </section>
 
     <!-- Create Department Button -->
     <section>
