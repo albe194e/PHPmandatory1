@@ -130,4 +130,31 @@ Class Department extends Database
             return false;
         }
     }
+
+    /**
+     * Search for departments in the database
+     * @param string $query The search query
+     * @return array|false An associative array with department information,
+     *         or false if there was an error
+     */
+    public function search($query): array|false
+    {
+        $pdo = $this->connect();
+        $sql =<<<SQL
+            SELECT nDepartmentID, cName
+            FROM department
+            WHERE cName LIKE :query
+            ORDER BY cName;
+        SQL;
+
+        try {
+            $stmt = $pdo->prepare($sql);
+            $stmt->bindValue(':query', '%' . $query . '%');
+            $stmt->execute();
+            return $stmt->fetchAll();
+        } catch (PDOException $e) {
+            Logger::logText('Error searching departments: ', $e);
+            return false;
+        }
+    }
 }

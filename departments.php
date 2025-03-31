@@ -6,6 +6,15 @@ $department = new Department();
 $errorMessage = null;
 $searchQuery = '';
 
+// Handle AJAX request for search suggestions
+if (isset($_GET['ajaxSearch']) && isset($_GET['query'])) {
+    $searchQuery = $_GET['query'];
+    $departments = $department->search($searchQuery);
+    header('Content-Type: application/json');
+    echo json_encode($departments);
+    exit;
+}
+
 // Handle form submissions for Create, Update, Delete, and Search
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['create'])) {
@@ -63,9 +72,10 @@ include_once 'views/header.php';
     <section>
         <h3>Search Departments</h3>
         <form method="POST" action="departments.php">
-            <input type="text" name="searchQuery" placeholder="Search by name..." value="<?=htmlspecialchars($searchQuery) ?>">
+            <input type="text" id="searchQuery" name="searchQuery" placeholder="Search by name..." value="<?=htmlspecialchars($searchQuery) ?>">
             <button type="submit" name="search">Search</button>
         </form>
+        <ul id="suggestions" class="suggestions"></ul>
     </section>
 
     <!-- Create Department Button -->
@@ -128,6 +138,27 @@ include_once 'views/header.php';
 
 <!-- Modal Styles -->
 <style>
+    .suggestions {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+        border: 1px solid #ccc;
+        max-height: 150px;
+        overflow-y: auto;
+        background-color: #fff;
+        position: absolute;
+        width: 300px;
+    }
+
+    .suggestions li {
+        padding: 8px;
+        cursor: pointer;
+    }
+
+    .suggestions li:hover {
+        background-color: #f0f0f0;
+    }
+
     .modal {
         display: none;
         position: fixed;
@@ -164,8 +195,40 @@ include_once 'views/header.php';
     }
 </style>
 
-<!-- Modal Script -->
+<!-- AJAX Script for Search Suggestions -->
 <script>
+    const searchInput = document.getElementById('searchQuery');
+    const suggestionsList = document.getElementById('suggestions');
+
+    searchInput.addEventListener('input', function () {
+        const query = searchInput.value;
+
+        if (query.length > 0) {
+            fetch(`departments.php?ajaxSearch=true&query=${encodeURIComponent(query)}`)
+                .then(response => response.json())
+                .then(data => {
+                    suggestionsList.innerHTML = '';
+                    data.forEach(department => {
+                        const li = document.createElement('li');
+                        li.textContent = department.cName;
+                        li.addEventListener('click', () => {
+                            searchInput.value = department.cName;
+                            suggestionsList.innerHTML = '';
+                        });
+                        suggestionsList.appendChild(li);
+                    });
+                });
+        } else {
+            suggestionsList.innerHTML = '';
+        }
+    });
+
+    document.addEventListener('click', function (event) {
+        if (!suggestionsList.contains(event.target) && event.target !== searchInput) {
+            suggestionsList.innerHTML = '';
+        }
+    });
+
     // Create Modal
     const createModal = document.getElementById('createModal');
     const openCreateModal = document.getElementById('openCreateModal');
