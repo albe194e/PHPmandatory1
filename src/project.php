@@ -73,5 +73,20 @@ Class Project extends Database
         $stmt->execute([':projectID' => $projectID]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-    
+
+    public function getAvailableEmployees(int $projectID): array {
+        $pdo = $this->connect();
+        $stmt = $pdo->prepare("
+            SELECT e.nEmployeeID, CONCAT(e.cFirstName, ' ', e.cLastName) AS fullName
+            FROM employee e
+            WHERE e.nEmployeeID NOT IN (
+                SELECT nEmployeeID 
+                FROM emp_proy 
+                WHERE nProjectID = :projectID
+            )
+            ORDER BY e.cFirstName, e.cLastName
+        ");
+        $stmt->execute([':projectID' => $projectID]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }
