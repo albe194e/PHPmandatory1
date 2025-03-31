@@ -3,8 +3,8 @@
 /**
  * Logs the information it receives as a parameter to a log file in the log folder.
  * @param $info An undefined series of strings or arrays to log
- * @author  Arturo Mora-Rioja
- * @version 1.0.0, December 2022
+ * @author  PHP Team
+ * @version 1.0.0, March 2025
  */
 
 Class Logger
