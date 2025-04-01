@@ -76,31 +76,7 @@ include_once 'views/header.php';
     </section>
 </main>
 
-<!-- Search Suggestions Styles -->
-<style>
-    .suggestions {
-        list-style-type: none;
-        padding: 0;
-        margin: 0;
-        border: 1px solid #ccc;
-        max-height: 150px;
-        overflow-y: auto;
-        background-color: #fff;
-        position: absolute;
-        width: 300px;
-    }
-
-    .suggestions li {
-        padding: 8px;
-        cursor: pointer;
-    }
-
-    .suggestions li:hover {
-        background-color: #f0f0f0;
-    }
-</style>
-
-<!-- AJAX Script for Search Suggestions -->
+<!-- AJAX Script for Search Suggestions
 <script>
     const searchInput = document.getElementById('searchQuery');
     const suggestionsList = document.getElementById('suggestions');
@@ -134,5 +110,6 @@ include_once 'views/header.php';
         }
     });
 </script>
+-->
 
 <?php include_once 'views/footer.php'; ?> 

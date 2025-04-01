@@ -72,30 +72,20 @@ include_once 'views/header.php';
     <section>
         <h3>Search Departments</h3>
         <form method="POST" action="departments.php">
-            <input type="text" id="searchQuery" name="searchQuery" placeholder="Search by name..." value="<?=htmlspecialchars($searchQuery) ?>">
+            <input type="text" name="searchQuery" placeholder="Search by name..." value="<?=htmlspecialchars($searchQuery) ?>">
             <button type="submit" name="search">Search</button>
         </form>
-        <ul id="suggestions" class="suggestions"></ul>
     </section>
 
-    <!-- Create Department Button -->
+    <!-- Create Department Form -->
     <section>
         <h3>Create Department</h3>
-        <button id="openCreateModal">Create Department</button>
+        <form method="POST" action="departments.php">
+            <label for="name">Department Name:</label>
+            <input type="text" id="name" name="name" required>
+            <button type="submit" name="create">Create</button>
+        </form>
     </section>
-
-    <!-- Create Department Modal -->
-    <div id="createModal" class="modal">
-        <div class="modal-content">
-            <span class="close" id="closeCreateModal">&times;</span>
-            <h3>Create Department</h3>
-            <form method="POST" action="departments.php">
-                <label for="name">Department Name:</label>
-                <input type="text" id="name" name="name" required>
-                <button type="submit" name="create">Create</button>
-            </form>
-        </div>
-    </div>
 
     <!-- List of Departments -->
     <section>
@@ -106,8 +96,12 @@ include_once 'views/header.php';
                     <h4><?=$dept['cName'] ?></h4>
                     <p><strong>Department ID: </strong><?=$dept['nDepartmentID'] ?></p>
                     
-                    <!-- Update Department Button -->
-                    <button class="openUpdateModal" data-id="<?=$dept['nDepartmentID'] ?>" data-name="<?=$dept['cName'] ?>">Update</button>
+                    <!-- Update Department Form -->
+                    <form method="POST" action="departments.php" style="display: inline;">
+                        <input type="hidden" name="id" value="<?=$dept['nDepartmentID'] ?>">
+                        <input type="text" name="name" value="<?=htmlspecialchars($dept['cName']) ?>" required>
+                        <button type="submit" name="update">Update</button>
+                    </form>
 
                     <!-- Delete Department Form -->
                     <form method="POST" action="departments.php" style="display: inline;">
@@ -121,161 +115,5 @@ include_once 'views/header.php';
         <?php endif; ?>
     </section>
 </main>
-
-<!-- Update Department Modal -->
-<div id="updateModal" class="modal">
-    <div class="modal-content">
-        <span class="close" id="closeUpdateModal">&times;</span>
-        <h3>Update Department</h3>
-        <form method="POST" action="departments.php">
-            <input type="hidden" id="update-id" name="id">
-            <label for="update-name">New Department Name:</label>
-            <input type="text" id="update-name" name="name" required>
-            <button type="submit" name="update">Update</button>
-        </form>
-    </div>
-</div>
-
-<!-- Modal Styles -->
-<style>
-    .suggestions {
-        list-style-type: none;
-        padding: 0;
-        margin: 0;
-        border: 1px solid #ccc;
-        max-height: 150px;
-        overflow-y: auto;
-        background-color: #fff;
-        position: absolute;
-        width: 300px;
-    }
-
-    .suggestions li {
-        padding: 8px;
-        cursor: pointer;
-    }
-
-    .suggestions li:hover {
-        background-color: #f0f0f0;
-    }
-
-    .modal {
-        display: none;
-        position: fixed;
-        z-index: 1;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        overflow: auto;
-        background-color: rgba(0, 0, 0, 0.4);
-    }
-
-    .modal-content {
-        background-color: #fff;
-        margin: 15% auto;
-        padding: 20px;
-        border: 1px solid #888;
-        width: 30%;
-        border-radius: 8px;
-    }
-
-    .close {
-        color: #aaa;
-        float: right;
-        font-size: 28px;
-        font-weight: bold;
-        cursor: pointer;
-    }
-
-    .close:hover,
-    .close:focus {
-        color: black;
-        text-decoration: none;
-    }
-</style>
-
-<!-- AJAX Script for Search Suggestions -->
-<script>
-    const searchInput = document.getElementById('searchQuery');
-    const suggestionsList = document.getElementById('suggestions');
-
-    searchInput.addEventListener('input', function () {
-        const query = searchInput.value;
-
-        if (query.length > 0) {
-            fetch(`departments.php?ajaxSearch=true&query=${encodeURIComponent(query)}`)
-                .then(response => response.json())
-                .then(data => {
-                    suggestionsList.innerHTML = '';
-                    data.forEach(department => {
-                        const li = document.createElement('li');
-                        li.textContent = department.cName;
-                        li.addEventListener('click', () => {
-                            searchInput.value = department.cName;
-                            suggestionsList.innerHTML = '';
-                        });
-                        suggestionsList.appendChild(li);
-                    });
-                });
-        } else {
-            suggestionsList.innerHTML = '';
-        }
-    });
-
-    document.addEventListener('click', function (event) {
-        if (!suggestionsList.contains(event.target) && event.target !== searchInput) {
-            suggestionsList.innerHTML = '';
-        }
-    });
-
-    // Create Modal
-    const createModal = document.getElementById('createModal');
-    const openCreateModal = document.getElementById('openCreateModal');
-    const closeCreateModal = document.getElementById('closeCreateModal');
-
-    openCreateModal.onclick = function () {
-        createModal.style.display = 'block';
-    };
-
-    closeCreateModal.onclick = function () {
-        createModal.style.display = 'none';
-    };
-
-    window.onclick = function (event) {
-        if (event.target === createModal) {
-            createModal.style.display = 'none';
-        }
-    };
-
-    // Update Modal
-    const updateModal = document.getElementById('updateModal');
-    const openUpdateButtons = document.querySelectorAll('.openUpdateModal');
-    const closeUpdateModal = document.getElementById('closeUpdateModal');
-    const updateIdInput = document.getElementById('update-id');
-    const updateNameInput = document.getElementById('update-name');
-
-    openUpdateButtons.forEach(button => {
-        button.onclick = function () {
-            const id = this.getAttribute('data-id');
-            const name = this.getAttribute('data-name');
-
-            updateIdInput.value = id;
-            updateNameInput.value = name;
-
-            updateModal.style.display = 'block';
-        };
-    });
-
-    closeUpdateModal.onclick = function () {
-        updateModal.style.display = 'none';
-    };
-
-    window.onclick = function (event) {
-        if (event.target === updateModal) {
-            updateModal.style.display = 'none';
-        }
-    };
-</script>
 
 <?php include_once 'views/footer.php'; ?>
