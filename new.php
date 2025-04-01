@@ -25,14 +25,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// $employee = getByID($pdo, $employeeID);
-
-// if (!$employee) {
-//     $errorMessage = 'There was an error retrieving employee information.';
-// } else {
-//     $employee = $employee[0];
-// }
-
 include_once 'views/header.php';
 
 ?>

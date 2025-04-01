@@ -89,4 +89,11 @@ Class Project extends Database
         $stmt->execute([':projectID' => $projectID]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function search(string $query): array|false {
+        $pdo = $this->connect();
+        $stmt = $pdo->prepare("SELECT nProjectID, cName FROM project WHERE cName LIKE :query ORDER BY cName");
+        $stmt->execute([':query' => "%$query%"]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: false;
+    }
 }

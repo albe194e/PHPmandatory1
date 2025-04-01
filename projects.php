@@ -3,6 +3,8 @@
 require_once 'src/project.php';
 
 $project = new Project();
+$errorMessage = null;
+$searchQuery = '';
 
 // Handle form submissions
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -38,8 +40,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $projectID = intval($_POST['projectID']);
         $employeeID = intval($_POST['employeeID']);
         if ($projectID > 0 && $employeeID > 0) {
-
-            
             if (!$project->addEmployee($projectID, $employeeID)) {
                 $errorMessage = 'Error adding employee to project.';
             }
@@ -55,12 +55,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
     }
+
+    if (isset($_POST['search'])) {
+        $searchQuery = $_POST['searchQuery'];
+    }
 }
 
-// Retrieve updated list of projects
-$projects = $project->getAll();
+// Retrieve projects, filtered by search query if provided
+if (!empty($searchQuery)) {
+    $projects = $project->search($searchQuery);
+} else {
+    $projects = $project->getAll();
+}
 
-if (!$projects) {
+if (!$projects && !$errorMessage) {
     $errorMessage = 'There was an error while retrieving the list of projects.';
 }
 
@@ -75,6 +83,15 @@ include_once 'views/header.php';
             <p class="error"><?= $errorMessage ?></p>
         </section>
     <?php endif; ?>
+
+    <!-- Search Bar -->
+    <section>
+        <h3>Search Projects</h3>
+        <form method="POST" action="projects.php">
+            <input type="text" name="searchQuery" placeholder="Search by name..." value="<?=htmlspecialchars($searchQuery) ?>">
+            <button type="submit" name="search">Search</button>
+        </form>
+    </section>
 
     <section>
         <h3>Create Project</h3>
@@ -98,7 +115,7 @@ include_once 'views/header.php';
 
                 <form method="POST">
                     <input type="hidden" name="projectID" value="<?= $proj['nProjectID'] ?>">
-                    <button type="submit" name="delete" onclick="return confirm('Are you sure you want to delete this project?');">Delete</button>
+                    <button type="submit" name="delete">Delete</button>
                 </form>
             </article>
         <?php endforeach; ?>
